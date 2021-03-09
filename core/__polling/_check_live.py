@@ -10,7 +10,7 @@ living_cache = Cache(ttl=120, default=None)
 
 
 def check_living() -> LiveInfo | None:
-    sleep_time = 5 / len(uplist)
+    sleep_time = 20 / len(uplist)
     for id in uplist.values():
         last_info: LiveInfo = living_cache.get(id)
         if not last_info:
