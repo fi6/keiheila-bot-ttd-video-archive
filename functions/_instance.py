@@ -1,4 +1,3 @@
-import os
 from khl import Bot, Cert
 from configs import auth
 import logging
@@ -11,9 +10,9 @@ bot = Bot(cmd_prefix=['.', '。'], cert=cert)
 
 async def async_logging(x):
     try:
-        logging.info(x) if x.content == '1' else None
+        logging.info(x)
     except Exception as e:
-        e
+        logging.exception(e)
 
 
 bot.on_text_msg(async_logging)

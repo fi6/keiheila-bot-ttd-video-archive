@@ -24,9 +24,8 @@ class __Polling(AsyncIOEventEmitter):
             try:
                 living = check_living()
                 if living:
-                    logging.info('live start event found {user}'.format(
-                        user=living.name))
                     self.emit('live_start', living)
+                    logging.info('emit live_start event')
                 if self.counter == 15:
                     self.counter = 0
                     asyncio.create_task(self.check_video())
