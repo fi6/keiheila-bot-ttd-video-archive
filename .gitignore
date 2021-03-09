@@ -129,5 +129,5 @@ dmypy.json
 .pyre/
 
 .vscode
-configs/**/*.json
+configs/**/auth*
 test.py

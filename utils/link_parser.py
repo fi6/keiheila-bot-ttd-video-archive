@@ -8,7 +8,7 @@ from bilibili_api import video
 from datetime import datetime
 
 
-async def link_parser(url: str) -> Union[str, None]:
+def link_parser(url: str) -> Union[str, None]:
     """Parse bvid from link
 
     Args:
@@ -22,7 +22,7 @@ async def link_parser(url: str) -> Union[str, None]:
         if not res:
             return None
         parse_result: ParseResult = urlparse(res)
-        bvid: re.Match[Any] | Any = re.search(r'BV.+$', parse_result.path)
+        bvid: re.Match[Any] | None = re.search(r'BV.+$', parse_result.path)
         return bvid[0] if bvid else None
 
 
