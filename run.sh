@@ -1,7 +1,7 @@
 NOW=$(date +"%H-%M-%S")
 DATE=$(date +"%m-%d-%y")
 mkdir -p logs/$DATE
-export PROJECT_DIR=/home/fi/tools/tou-ladder
+export PROJECT_DIR=/home/fi/tools/kaiheila-bot-up
 PID=$(cat run.pid)
 PID_EXIST=$(ps aux | awk '{print $2}'| grep -w $PID)
 if ps -p $PID > /dev/null
