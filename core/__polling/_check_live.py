@@ -11,7 +11,7 @@ living_cache = Cache(ttl=120, default=None)
 
 
 def check_living() -> LiveInfo | None:
-    sleep_time = 10 / len(roomlist) + randint(-3, 3)
+    sleep_time = 1 + randint(0, 5)
     for id in roomlist.values():
         last_info: LiveInfo = living_cache.get(id)
         if not last_info:
