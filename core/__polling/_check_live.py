@@ -1,17 +1,18 @@
 from __future__ import annotations
 
-from core.uplist import uplist, roomlist
+from core.uplist import roomlist
 from core.types import LiveInfo
 from bilibili_api import live, user
 import time
 from cacheout import Cache
+from random import randint
 
 living_cache = Cache(ttl=120, default=None)
 
 
 def check_living() -> LiveInfo | None:
-    sleep_time = 20 / len(roomlist)
-    for id in uplist.values():
+    sleep_time = 10 / len(roomlist) + randint(-3, 3)
+    for id in roomlist.values():
         last_info: LiveInfo = living_cache.get(id)
         if not last_info:
             living_cache.set(id, LiveInfo(live.get_room_play_info(id)))
