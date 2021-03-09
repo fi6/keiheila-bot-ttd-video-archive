@@ -14,10 +14,10 @@ def check_living() -> LiveInfo | None:
     for id in uplist.values():
         last_info: LiveInfo = living_cache.get(id)
         if not last_info:
-            living_cache.set(id, LiveInfo(live.get_room_info(id)))
+            living_cache.set(id, LiveInfo(live.get_room_play_info(id)))
             continue
         if last_info.live_status == 0:
-            info = LiveInfo(user.get_live_info(int(id)))
+            info = LiveInfo(live.get_room_play_info(int(id)))
             living_cache.set(id, info)
             if info.live_status == 1:
                 # just start living
