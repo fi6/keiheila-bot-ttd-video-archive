@@ -1,4 +1,5 @@
 import asyncio
+import time
 from pyee import AsyncIOEventEmitter
 from ._check_live import check_living
 from ._check_video import check_video
@@ -20,15 +21,19 @@ class __Polling(AsyncIOEventEmitter):
     async def start(self):
         logging.info('polling start')
         while True:
-            living = check_living()
-            if living:
-                logging.info(
-                    'live start event found {user}'.format(user=living.name))
-                self.emit('live_start', living)
-            if self.counter == 15:
-                self.counter = 0
-                asyncio.create_task(self.check_video())
-            self.counter += 1
+            try:
+                living = check_living()
+                if living:
+                    logging.info('live start event found {user}'.format(
+                        user=living.name))
+                    self.emit('live_start', living)
+                if self.counter == 15:
+                    self.counter = 0
+                    asyncio.create_task(self.check_video())
+                self.counter += 1
+            except Exception as e:
+                time.sleep(3600)
+                logging.exception(e)
             # if interrupted:
             #     break
 
