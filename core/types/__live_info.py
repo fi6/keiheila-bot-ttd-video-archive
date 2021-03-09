@@ -5,7 +5,7 @@ from typing import Any, Dict, List
 class LiveInfo(object):
     __slots__ = [
         'live_status', 'round_status', 'url', 'title', 'cover', 'online',
-        'roomid', 'name', 'avatar'
+        'roomid', 'name', 'avatar', 'sign'
     ]
     live_status: int
     round_status: int
@@ -27,6 +27,7 @@ class LiveInfo(object):
     def add_extra(self, extra_info: Dict[str, Any]):
         self.name = extra_info['name']
         self.avatar = extra_info['face']
+        self.sign = extra_info['sign']
 
     def to_card(self) -> List[Dict[str, Any]]:
         return [{
@@ -45,8 +46,11 @@ class LiveInfo(object):
             }, {
                 "type": "section",
                 "text": {
-                    "type": "kmarkdown",
-                    "content": "**{user}刚刚开播了！**".format(user=self.name)
+                    "type":
+                    "kmarkdown",
+                    "content":
+                    "**{user}刚刚开播了！**\n{sign}".format(user=self.name,
+                                                      sign=self.sign)
                 },
                 "mode": "left",
                 "accessory": {
@@ -69,7 +73,7 @@ class LiveInfo(object):
                     "type":
                     "kmarkdown",
                     "content":
-                    "标题：\n{title}\n[点击前往观看]({url})".format(title=self.title,
+                    "直播间标题：\n{title}\n[点击前往观看]({url})".format(title=self.title,
                                                            url=self.url)
                 },
                 "mode": "right",

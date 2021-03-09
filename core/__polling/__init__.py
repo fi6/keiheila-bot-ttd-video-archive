@@ -22,7 +22,7 @@ class __Polling(AsyncIOEventEmitter):
             living = check_living()
             if living:
                 self.emit('live_start', living)
-            if self.counter == 10:
+            if self.counter == 15:
                 self.counter = 0
                 for video in check_video():
                     self.emit('video_update', video)
