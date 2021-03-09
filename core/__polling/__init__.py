@@ -4,15 +4,13 @@ from ._check_video import check_video
 import signal
 import logging
 
+# def signal_handler(signal, frame):
+#     global interrupted
+#     interrupted = True
 
-def signal_handler(signal, frame):
-    global interrupted
-    interrupted = True
+# signal.signal(signal.SIGINT, signal_handler)
 
-
-signal.signal(signal.SIGINT, signal_handler)
-
-interrupted = False
+# interrupted = False
 
 
 class __Polling(AsyncIOEventEmitter):
@@ -33,8 +31,8 @@ class __Polling(AsyncIOEventEmitter):
                         user=video.author, title=video.title))
                     self.emit('video_update', video)
             self.counter += 1
-            if interrupted:
-                break
+            # if interrupted:
+            #     break
 
 
 polling = __Polling()
