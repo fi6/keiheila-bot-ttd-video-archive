@@ -16,18 +16,20 @@ class LiveInfo(object):
     roomid: int
 
     def __init__(self, live_info_response: Dict[str, Any]) -> None:
-        self.live_status = live_info_response['liveStatus']
-        self.round_status = live_info_response['roundStatus']
-        self.url = live_info_response['url']
-        self.title = live_info_response['title']
-        self.cover = live_info_response['cover']
-        self.online = live_info_response['online']
-        self.roomid = live_info_response['roomid']
+        self.live_status = live_info_response['live_status']
 
     def add_extra(self, extra_info: Dict[str, Any]):
         self.name = extra_info['name']
         self.avatar = extra_info['face']
         self.sign = extra_info['sign']
+        room = extra_info['live_room']
+        self.live_status = room['liveStatus']
+        self.round_status = room['roundStatus']
+        self.url = room['url']
+        self.title = room['title']
+        self.cover = room['cover']
+        self.online = room['online']
+        self.roomid = room['roomid']
 
     def to_card(self) -> List[Dict[str, Any]]:
         return [{
@@ -74,7 +76,7 @@ class LiveInfo(object):
                     "kmarkdown",
                     "content":
                     "直播间标题：\n{title}\n[点击前往观看]({url})".format(title=self.title,
-                                                           url=self.url)
+                                                              url=self.url)
                 },
                 "mode": "right",
                 "accessory": {

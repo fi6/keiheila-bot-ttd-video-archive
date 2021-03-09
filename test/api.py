@@ -1,3 +1,3 @@
-from bilibili_api import user
+from bilibili_api import user, live
 
-print(user.get_user_info(2607110))
+print(live.get_room_play_info(19956))

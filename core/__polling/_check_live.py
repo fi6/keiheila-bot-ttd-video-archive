@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from core.uplist import uplist
+from core.uplist import uplist, roomlist
 from core.types import LiveInfo
 from bilibili_api import live, user
 import time
@@ -10,11 +10,11 @@ living_cache = Cache(ttl=120, default=None)
 
 
 def check_living() -> LiveInfo | None:
-    sleep_time = 20 / len(uplist)
+    sleep_time = 20 / len(roomlist)
     for id in uplist.values():
         last_info: LiveInfo = living_cache.get(id)
         if not last_info:
-            living_cache.set(id, LiveInfo(user.get_live_info(int(id))))
+            living_cache.set(id, LiveInfo(live.get_room_info(id)))
             continue
         if last_info.live_status == 0:
             info = LiveInfo(user.get_live_info(int(id)))
