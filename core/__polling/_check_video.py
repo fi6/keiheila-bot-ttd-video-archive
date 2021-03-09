@@ -8,14 +8,14 @@ import time
 
 
 def check_video():
-    sleep_time = 20 / len(uplist)
+    sleep_time = 120 / len(uplist)
     for id in uplist.values():
         existing = Video.objects(mid=id).order_by('-pubdate').only('bvid')[:11]
         bvids = [v.bvid for v in existing]
         cnt = 0
         for vid in user.get_videos_g(int(id), order='pubdate'):
             vid = UserVideo(**vid)
-            if cnt >= 10:
+            if cnt >= 3:
                 break
             cnt += 1
             if vid.bvid in bvids:
