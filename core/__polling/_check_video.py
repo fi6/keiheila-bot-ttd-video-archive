@@ -28,6 +28,7 @@ def check_video():
                    for k, v in vid_all.items() if k in fields})
             vid_doc.mid = vid_all['owner']['mid']
             vid_doc.tags = [t['tag_name'] for t in tags]
+            vid_doc.author = vid_all['owner']['name']
             vid_doc.save()
             yield vid_doc
             logging.info('added new video: {vid}'.format(vid=vid_all))

@@ -1,5 +1,5 @@
 from mongoengine import Document
-from mongoengine.fields import IntField, ListField, StringField
+from mongoengine.fields import DictField, IntField, ListField, StringField
 from enum import Enum
 from datetime import datetime
 
@@ -15,6 +15,7 @@ class Video(Document):
     typeid = IntField()
     pic = StringField()
     desc = StringField(required=True)
+    owner = DictField()
     author = StringField()
     pubdate = IntField()
     ctime = IntField()
