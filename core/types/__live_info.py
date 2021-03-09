@@ -5,7 +5,7 @@ from typing import Any, Dict, List
 class LiveInfo(object):
     __slots__ = [
         'live_status', 'round_status', 'url', 'title', 'cover', 'online',
-        'roomid', 'name', 'avatar', 'sign'
+        'roomid', 'name', 'avatar', 'sign', 'mid'
     ]
     live_status: int
     round_status: int
@@ -14,22 +14,24 @@ class LiveInfo(object):
     cover: str
     online: int
     roomid: int
+    mid: int
 
     def __init__(self, live_info_response: Dict[str, Any]) -> None:
         self.live_status = live_info_response['live_status']
+        self.mid = int(live_info_response['uid'])
 
     def add_extra(self, extra_info: Dict[str, Any]):
         self.name = extra_info['name']
         self.avatar = extra_info['face']
         self.sign = extra_info['sign']
         room = extra_info['live_room']
-        self.live_status = room['liveStatus']
+        self.live_status = int(room['liveStatus'])
         self.round_status = room['roundStatus']
         self.url = room['url']
         self.title = room['title']
         self.cover = room['cover']
         self.online = room['online']
-        self.roomid = room['roomid']
+        self.roomid = int(room['roomid'])
 
     def to_card(self) -> List[Dict[str, Any]]:
         return [{
