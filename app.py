@@ -1,23 +1,13 @@
-import asyncio
-import core
 import logging
-from functions import bot
-
+import asyncio
 logging.basicConfig(level=logging.INFO)
 
 
-# @bot.command(name='echo')
-# async def func(session: Session):
-#     logging.info(await session.reply(f'{session.args}'))
-#     return None
-
-# # everything done, go ahead now!
-async def run_bot():
-    bot.run()
-
-
 async def main():
-    await asyncio.gather(run_bot(), core.polling.start())
+    import core
+    from functions import bot
+    asyncio.create_task(core.polling.start())
+    bot.run()
 
 
 asyncio.run(main())
