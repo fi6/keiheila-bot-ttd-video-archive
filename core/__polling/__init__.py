@@ -26,16 +26,17 @@ class __Polling(AsyncIOEventEmitter):
 
     def __init__(self, loop=None):
         super().__init__(loop=loop)
-        self.scheduler.start()
+        self.scheduler.start(paused=True)
         self.live_check_job = self.scheduler.add_job(self.check_living,
                                                      'interval',
-                                                     seconds=2,
-                                                     jitter=1)
+                                                     seconds=2.7,
+                                                     jitter=0.5)
         self.video_check_job = self.scheduler.add_job(self.check_video,
                                                       'interval',
                                                       seconds=180,
                                                       jitter=20)
         self.scheduler.add_listener(self.__job_listener, EVENT_JOB_ERROR)
+        logging.getLogger('apscheduler').setLevel(logging.WARNING)
 
     async def check_living(self):
         # raise Exception('error test')
@@ -43,7 +44,7 @@ class __Polling(AsyncIOEventEmitter):
 
     async def start(self):
         logging.info('polling start')
-        self.scheduler.start()
+        self.scheduler.resume()
         # while True:
         #     try:
         #         living = await check_living()
