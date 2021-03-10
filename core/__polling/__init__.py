@@ -22,7 +22,7 @@ class __Polling(AsyncIOEventEmitter):
         logging.info('polling start')
         while True:
             try:
-                living = check_living()
+                living = await check_living()
                 if living:
                     self.emit('live_start', living)
                     logging.info('emit live_start event')
@@ -37,7 +37,7 @@ class __Polling(AsyncIOEventEmitter):
             #     break
 
     async def check_video(self):
-        for video in check_video():
+        async for video in check_video():
             logging.info('new video: {user} {title}'.format(user=video.author,
                                                             title=video.title))
             self.emit('video_update', video)

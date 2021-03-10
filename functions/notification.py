@@ -10,11 +10,15 @@ if TYPE_CHECKING:
     from core.types import LiveInfo
 
 
-@polling.on('live_start')
 async def live_notif(living: LiveInfo):
     logging.info('received live start event')
     card = living.to_card()
     await bot.send(configs.channel.notif, json.dumps(card))
 
 
-logging.info('[init success] live start sender')
+polling.on('live_start', live_notif)
+
+if polling.listeners('live_start'):
+    logging.info('[init success] live start sender')
+else:
+    logging.exception('[init failed] live start sender')

@@ -1,4 +1,5 @@
 from __future__ import annotations
+import asyncio
 import logging
 
 from core.uplist import roomlist
@@ -11,7 +12,7 @@ from random import randint
 living_cache = Cache(ttl=300, default=None)
 
 
-def check_living() -> LiveInfo | None:
+async def check_living() -> LiveInfo | None:
     sleep_time = 1 + randint(0, 3)
     for id in roomlist.values():
         last_info: LiveInfo | None = living_cache.get(id)
@@ -31,6 +32,6 @@ def check_living() -> LiveInfo | None:
                 info.add_extra(user_info)
                 return info
 
-        time.sleep(sleep_time)
+        await asyncio.sleep(sleep_time)
 
     return None

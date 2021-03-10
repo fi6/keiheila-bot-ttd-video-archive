@@ -8,14 +8,15 @@ logging.basicConfig(
 )
 
 
-async def main():
+def main():
     import core
     from functions import bot
-    asyncio.create_task(core.polling.start())
+    asyncio.get_event_loop().create_task(core.polling.start())
     bot.run()
 
 
-asyncio.run(main())
+if __name__ == '__main__':
+    main()
 
 # async def main():
 #     async with asyncio.Semaphore(5):

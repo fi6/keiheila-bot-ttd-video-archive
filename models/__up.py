@@ -7,6 +7,5 @@ class Up(Document):
 
 
 class VerifiedUp(Up):
-    role = IntField()
+    follower_role = IntField(db_field='role')
     mid = IntField()
-    

@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from typing import List
 from core.uplist import uplist
@@ -7,7 +8,7 @@ from models import Video
 import time
 
 
-def check_video():
+async def check_video():
     sleep_time = 120 / len(uplist)
     for id in uplist.values():
         existing = Video.objects(mid=id).order_by('-pubdate').only('bvid')[:11]
@@ -33,4 +34,4 @@ def check_video():
             yield vid_doc
             logging.info('added new video: {vid}'.format(vid=vid_all))
 
-        time.sleep(sleep_time)
+        await asyncio.sleep(sleep_time)
