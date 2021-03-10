@@ -1,5 +1,8 @@
 import asyncio
 import time
+
+from chinese_calendar.utils import is_workday
+from utils.date import get_cn_time
 from apscheduler.events import EVENT_JOB_ERROR
 from pyee import AsyncIOEventEmitter
 import pytz
@@ -8,6 +11,7 @@ from ._check_video import check_video
 import signal
 import logging
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from chinese_calendar import is_holiday
 
 # def signal_handler(signal, frame):
 #     global interrupted
@@ -39,6 +43,11 @@ class __Polling(AsyncIOEventEmitter):
         logging.getLogger('apscheduler').setLevel(logging.WARNING)
 
     async def check_living(self):
+        now = get_cn_time()
+        if now.hour <= 18 and is_workday(now):
+            return
+        elif now.hour < 8:
+            return
         # raise Exception('error test')
         return await check_living()
 
