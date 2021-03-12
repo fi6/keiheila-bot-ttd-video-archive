@@ -53,8 +53,6 @@ class Video(Document):
                     "src": self.pic,
                 }]
             }, {
-                "type": "divider"
-            }, {
                 "type": "section",
                 "text": {
                     "type":
