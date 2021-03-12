@@ -7,6 +7,7 @@ from core.types import LiveInfo
 from bilibili_api import live, user
 from cacheout import Cache
 import random
+
 living_cache = Cache(ttl=300, default=None)
 
 
@@ -19,9 +20,10 @@ async def check_living() -> LiveInfo | None:
             logging.info('{mid} expired in cache'.format(mid=info.mid))
             living_cache.set(id, info)
             continue
-        elif last_info.live_status == 0:
+        elif last_info.live_status != 1:
             info = LiveInfo(live.get_room_play_info(int(id)))
             living_cache.set(id, info)
+            # logging.debug(living_cache.expire_times())
             if info.live_status == 1:
                 # just start living
                 user_info = user.get_user_info(info.mid)
@@ -29,6 +31,9 @@ async def check_living() -> LiveInfo | None:
                     'live start user info : {info}'.format(info=user_info))
                 info.add_extra(user_info)
                 return info
+        elif last_info.live_status == 1:
+            pass
+            # logging.debug('living')
         if i == len(roomlist.values()) - 1:
             break
         await asyncio.sleep(sleep_time)

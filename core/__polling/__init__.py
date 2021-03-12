@@ -49,7 +49,9 @@ class __Polling(AsyncIOEventEmitter):
         elif now.hour < 8:
             return
         # raise Exception('error test')
-        return await check_living()
+        live_info = await check_living()
+        if live_info:
+            self.emit('live_start', live_info)
 
     async def start(self):
         logging.info('polling start')

@@ -18,7 +18,7 @@ async def live_notif(living: LiveInfo):
 
 polling.on('live_start', live_notif)
 
-if polling.listeners('live_start'):
+if len(polling.listeners('live_start')):
     logging.info('[init success] live start sender')
 else:
     logging.exception('[init failed] live start sender')
