@@ -1,17 +1,17 @@
 import asyncio
 import logging
+from random import random
 from typing import List
 from core.uplist import uplist
 from core.types import UserVideo
 from bilibili_api import user, video
 from models import Video
-import time
 
 
 async def check_video():
-    sleep_time = 120 / len(uplist)
+    sleep_time = 300 / len(uplist) + 2 * random()
     for id in uplist.values():
-        existing = Video.objects(mid=id).order_by('-pubdate').only('bvid')[:11]
+        existing = Video.objects(mid=id).order_by('-pubdate').only('bvid')[:5]
         bvids = [v.bvid for v in existing]
         cnt = 0
         for vid in user.get_videos_g(int(id), order='pubdate'):
