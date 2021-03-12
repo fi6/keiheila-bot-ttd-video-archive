@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 from core import polling
 from ._instance import bot
 import json
+from models import Video
 
 if TYPE_CHECKING:
     from core.types import LiveInfo
@@ -14,6 +15,10 @@ async def live_notif(living: LiveInfo):
     logging.info('received live start event')
     card = living.to_card()
     await bot.send(configs.channel.notif, json.dumps(card))
+
+
+async def video_notif(video: Video):
+    card = video.to_card()
 
 
 polling.on('live_start', live_notif)

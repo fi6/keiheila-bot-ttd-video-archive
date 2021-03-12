@@ -1,3 +1,4 @@
+from typing import Any, List
 from mongoengine import Document
 from mongoengine.fields import DictField, IntField, ListField, StringField
 from enum import Enum
@@ -28,3 +29,6 @@ class Video(Document):
     @property
     def publish_date(self) -> datetime:
         return datetime.fromtimestamp(self.pubdate)
+
+    def to_card(self) -> List[Any]:
+        return []
