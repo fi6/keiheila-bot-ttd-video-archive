@@ -1,6 +1,7 @@
 from typing import Any, List
+from utils.date import get_time_str
 from mongoengine import Document
-from mongoengine.fields import DictField, IntField, ListField, StringField
+from mongoengine.fields import DateTimeField, DynamicField, IntField, ListField, ReferenceField, StringField
 from enum import Enum
 from datetime import datetime
 
@@ -10,25 +11,80 @@ class VideoTypes(Enum):
 
 
 class Video(Document):
-    bvid = StringField(required=True)
-    aid = IntField()
+    _raw = DynamicField()
+    bvid = StringField(required=True, unique=True)
     title = StringField(required=True)
-    typeid = IntField()
     pic = StringField()
     desc = StringField(required=True)
-    owner = DictField()
     author = StringField()
-    pubdate = IntField()
-    ctime = IntField()
+    publish = DateTimeField()
     duration = IntField()
-    mid = IntField(required=True)
+    uid = IntField(required=True, db_field='uid')
+    up_ref = ReferenceField('VerifiedUp', db_field='up')
     dynamic = StringField()
     tags = ListField(StringField(), default=[])
     meta = {'collection': 'videos'}
 
-    @property
-    def publish_date(self) -> datetime:
-        return datetime.fromtimestamp(self.pubdate)
+    # @property
+    # def uid(self) -> int:
+    #     return self.mid
 
     def to_card(self) -> List[Any]:
-        return []
+        # if self.up_ref and self.up_ref.kid:
+        #     khl_id = self.up_ref.kid
+        khl_id = None
+        return [{
+            "type":
+            "card",
+            "theme":
+            "secondary",
+            "size":
+            "lg",
+            "modules": [{
+                "type": "header",
+                "text": {
+                    "type": "plain-text",
+                    "content": "视频更新"
+                }
+            }, {
+                "type": "section",
+                "text": {
+                    "type":
+                    "kmarkdown",
+                    "content":
+                    "**[{title}]({url})**\n作者: {author}".format(
+                        url=f'https://www.bilibili.com/video/{self.bvid}',
+                        title=self.title,
+                        author=f'(met){khl_id}(met)'
+                        if khl_id else self.author,
+                        desc=self.desc
+                        if len(self.desc) <= 152 else self.desc[:150] + '...',
+                        pubdate=get_time_str(self.publish))
+                }
+            }, {
+                "type": "divider"
+            }, {
+                "type": "section",
+                "text": {
+                    "type":
+                    "kmarkdown",
+                    "content":
+                    "简介：{desc}".format(desc=self.desc if len(self.desc) <= 152
+                                       else self.desc[:150] + '...', )
+                }
+            }, {
+                "type": "section",
+                "text": {
+                    "type":
+                    "kmarkdown",
+                    "content":
+                    "发布于：{pubdate}".format(pubdate=get_time_str(self.publish))
+                }
+            }, {
+                "type": "image-group",
+                "elements": [{
+                    "type": "image",
+                    "src": self.pic,
+                }]
+            }]
+        }]

@@ -100,15 +100,19 @@ class __Polling(AsyncIOEventEmitter):
                 continue
             cnt += 1
             # print('polling video')
-            self._check_video(1)
+            await self._check_video(1)
             if cnt % 3 == 0:
-                asyncio.get_event_loop().call_later(1, self._check_video, 0)
+                asyncio.get_event_loop().create_task(self._check_video(0))
             if cnt >= 12:
                 cnt = 0
-                asyncio.get_event_loop().call_later(2, self._check_video, -1)
+                asyncio.get_event_loop().create_task(self._check_video(-1))
             await asyncio.sleep(180)
 
-    def _check_video(self, priority):
+    async def _check_video(self, priority):
+        if priority == 0:
+            await asyncio.sleep(1)
+        elif priority == -1:
+            await asyncio.sleep(2)
         async for video in check_video(priority):
             logging.info('new video: {user} {title}'.format(user=video.author,
                                                             title=video.title))

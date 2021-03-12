@@ -13,7 +13,7 @@ class Up(Document):
 
 class VerifiedUp(Up):
     follower_role = IntField(db_field='follower')
-
+    kid = StringField()
     # 0: normal, -1: below, 1: high
     priority = IntField()
     tag = ListField(StringField())
