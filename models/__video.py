@@ -47,6 +47,14 @@ class Video(Document):
                     "content": "视频更新"
                 }
             }, {
+                "type": "image-group",
+                "elements": [{
+                    "type": "image",
+                    "src": self.pic,
+                }]
+            }, {
+                "type": "divider"
+            }, {
                 "type": "section",
                 "text": {
                     "type":
@@ -57,9 +65,7 @@ class Video(Document):
                         title=self.title,
                         author=f'(met){khl_id}(met)'
                         if khl_id else self.author,
-                        desc=self.desc
-                        if len(self.desc) <= 152 else self.desc[:150] + '...',
-                        pubdate=get_time_str(self.publish))
+                    )
                 }
             }, {
                 "type": "divider"
@@ -69,22 +75,17 @@ class Video(Document):
                     "type":
                     "kmarkdown",
                     "content":
-                    "简介：{desc}".format(desc=self.desc if len(self.desc) <= 152
-                                       else self.desc[:150] + '...', )
+                    "{desc}".format(desc=self.desc if len(self.desc) <= 152
+                                    else self.desc[:150] + '...', )
                 }
             }, {
-                "type": "section",
-                "text": {
+                "type":
+                "context",
+                "elements": [{
                     "type":
                     "kmarkdown",
                     "content":
                     "发布于：{pubdate}".format(pubdate=get_time_str(self.publish))
-                }
-            }, {
-                "type": "image-group",
-                "elements": [{
-                    "type": "image",
-                    "src": self.pic,
                 }]
             }]
         }]
