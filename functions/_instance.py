@@ -10,11 +10,11 @@ bot = Bot(cmd_prefix=['.', '。'], cert=cert)
 
 async def async_logging(x):
     try:
-        logging.info(x)
+        logging.debug(x)
     except Exception as e:
         logging.exception(e)
 
 
-bot.on_raw_event(async_logging)
+# bot.on_raw_event(async_logging)
 
 logging.debug('bot on raw event success')
