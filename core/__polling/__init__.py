@@ -93,16 +93,26 @@ class __Polling(AsyncIOEventEmitter):
         logging.info('polling resumed')
 
     async def check_video_start(self):
+        cnt = 0
         while True:
             await asyncio.sleep(1.1)
             if not self.start_flag:
                 continue
+            cnt += 1
             # print('polling video')
-            async for video in check_video():
-                logging.info('new video: {user} {title}'.format(
-                    user=video.author, title=video.title))
-                self.emit('video_update', video)
+            self._check_video(1)
+            if cnt % 3 == 0:
+                asyncio.get_event_loop().call_later(1, self._check_video, 0)
+            if cnt >= 12:
+                cnt = 0
+                asyncio.get_event_loop().call_later(2, self._check_video, -1)
             await asyncio.sleep(180)
+
+    def _check_video(self, priority):
+        async for video in check_video(priority):
+            logging.info('new video: {user} {title}'.format(user=video.author,
+                                                            title=video.title))
+            self.emit('video_update', video)
 
     def __job_listener(self, event):
         if event.exception:
