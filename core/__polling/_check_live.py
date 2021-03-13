@@ -39,3 +39,7 @@ async def check() -> LiveInfo | None:
         await asyncio.sleep(sleep_time)
 
     return None
+
+
+def get_room_info():
+    pass

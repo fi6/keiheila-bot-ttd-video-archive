@@ -13,7 +13,7 @@ async def check_video(priority: int):
     ups: List[VerifiedUp] = VerifiedUp.objects(tag='video', priority=priority)
     uplist = [up.uid for up in ups]
     sleep_time = 180 / len(uplist) + 2 * random()
-    # print(uplist)
+    logging.info('up list total: {total}'.format(total=len(uplist)))
     for id in uplist:
         existing = Video.objects(uid=id).order_by('-pubdate').only('bvid')[:5]
         bvids = [v.bvid for v in existing]
