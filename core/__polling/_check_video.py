@@ -12,7 +12,7 @@ from models import Video, VerifiedUp
 async def check_video(priority: int):
     ups: List[VerifiedUp] = VerifiedUp.objects(tag='video', priority=priority)
     uplist = [up.uid for up in ups]
-    sleep_time = 180 / len(uplist) + 2 * random()
+    sleep_time = 180 * (2 - priority) / len(uplist) + 2 * random()
     logging.info('priority: {p}, up list total: {total}'.format(
         p=priority, total=len(uplist)))
     for id in uplist:
