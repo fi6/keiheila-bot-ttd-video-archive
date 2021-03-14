@@ -93,7 +93,7 @@ class __Polling(AsyncIOEventEmitter):
         logging.info('polling resumed')
 
     async def check_video_start(self):
-        cnt = 0
+        cnt = 11
         while True:
             await asyncio.sleep(1.1)
             if not self.start_flag:
@@ -104,8 +104,8 @@ class __Polling(AsyncIOEventEmitter):
             if cnt % 3 == 0:
                 asyncio.get_event_loop().create_task(self._check_video(0))
             if cnt >= 12:
-                cnt = 0
                 asyncio.get_event_loop().create_task(self._check_video(-1))
+                cnt = 0
             await asyncio.sleep(180)
 
     async def _check_video(self, priority):
