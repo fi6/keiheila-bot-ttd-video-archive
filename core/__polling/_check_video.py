@@ -16,7 +16,7 @@ async def check_video(priority: int):
     logging.info('priority: {p}, up list total: {total}'.format(
         p=priority, total=len(uplist)))
     for id in uplist:
-        existing = Video.objects(uid=id).order_by('-pubdate').only('bvid')[:5]
+        existing = Video.objects(uid=id).order_by('-publish').only('bvid')[:5]
         bvids = [v.bvid for v in existing]
         cnt = 0
         for vid in user.get_videos_g(int(id), order='pubdate'):
