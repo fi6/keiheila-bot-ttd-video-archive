@@ -38,7 +38,7 @@ class LiveInfo(object):
             "type":
             "card",
             "theme":
-            "secondary",
+            "warning",
             "size":
             "lg",
             "modules": [{
@@ -50,11 +50,8 @@ class LiveInfo(object):
             }, {
                 "type": "section",
                 "text": {
-                    "type":
-                    "kmarkdown",
-                    "content":
-                    "**{user}刚刚开播了！**\n{sign}".format(user=self.name,
-                                                      sign=self.sign)
+                    "type": "kmarkdown",
+                    "content": "**{user}刚刚开播了！**".format(user=self.name)
                 },
                 "mode": "left",
                 "accessory": {
@@ -63,6 +60,13 @@ class LiveInfo(object):
                     "circle": True,
                     "size": "sm"
                 }
+            }, {
+                "type":
+                "context",
+                "elements": [{
+                    "type": "plain-text",
+                    "content": self.sign
+                }]
             }]
         }, {
             "type":
@@ -77,15 +81,15 @@ class LiveInfo(object):
                     "type":
                     "kmarkdown",
                     "content":
-                    "直播间标题：\n{title}\n[点击前往观看]({url})".format(title=self.title,
+                    "直播间标题：\n**{title}**\n[点击前往观看]({url})".format(title=self.title,
                                                               url=self.url)
-                },
-                "mode": "right",
-                "accessory": {
-                    "type": "image",
-                    "src": self.cover,
-                    "size": "lg"
                 }
+            }, {
+                "type": "image-group",
+                "elements": [{
+                    "type": "image",
+                    "src": self.cover
+                }]
             }]
         }]
 
