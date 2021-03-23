@@ -32,6 +32,7 @@ async def check_video(priority: int):
             tags = video.get_tags(bvid=vid.bvid)
             tag_names: List[str] = [t['tag_name'] for t in tags]
             if '任天堂明星大乱斗' not in tag_names:
+                logging.debug((vid_all, tag_names))
                 continue
             vid_doc = create_video_doc(vid_all, tag_names)
             # print(vid_doc)

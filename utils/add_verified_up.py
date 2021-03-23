@@ -7,7 +7,7 @@ from models import VerifiedUp
 # ups = VerifiedUp.objects(tag='video', priority=1)
 # print(ups)
 
-u = user.get_user_info(330364988)
+u = user.get_user_info(2672015)
 up = VerifiedUp(uid=u['mid'],
                 roomid=u['live_room']['roomid'],
                 avatar=u['face'],
@@ -17,4 +17,4 @@ up = VerifiedUp(uid=u['mid'],
                 tag=['video'])
 up.kid = '3961957847'
 up.save()
-print(up.to_json())
+print(up.to_mongo())
