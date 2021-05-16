@@ -1,16 +1,19 @@
 import asyncio
+from datetime import datetime, timedelta
+from random import randint
 import time
+from apscheduler.util import timedelta_seconds
 
 from chinese_calendar.utils import is_workday
 from utils.date import get_cn_time
-from apscheduler.events import EVENT_JOB_ERROR
+from apscheduler.events import EVENT_ALL, EVENT_JOB_ERROR
 from pyee import AsyncIOEventEmitter
-import pytz
+
 from . import _check_live
 from ._check_video import check_video
 import signal
 import logging
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from .__scheduler import scheduler
 from chinese_calendar import is_holiday
 
 # def signal_handler(signal, frame):
@@ -23,10 +26,8 @@ from chinese_calendar import is_holiday
 
 
 class __Polling(AsyncIOEventEmitter):
-    counter: int = 0
+    counter: int = 11
     start_flag: bool = True
-    scheduler = AsyncIOScheduler(
-        {'apscheduler.timezone': pytz.timezone('Asia/Shanghai')})
 
     def __init__(self, loop=None):
         super().__init__(loop=loop)
@@ -39,91 +40,84 @@ class __Polling(AsyncIOEventEmitter):
         #                                               'interval',
         #                                               seconds=180,
         #                                               jitter=20)
-        # self.scheduler.add_listener(self.__job_listener, EVENT_JOB_ERROR)
-        # logging.getLogger('apscheduler').setLevel(logging.ERROR)
+        # scheduler.add_listener(self.__job_listener, EVENT_ALL)
 
     async def start(self):
         logging.info('polling start')
+        logging.getLogger('apscheduler').setLevel(logging.ERROR)
+        scheduler.start()
         asyncio.create_task(self.check_live_start())
         asyncio.get_event_loop().create_task(self.check_video_start())
-        # while True:
-        #     try:
-        #         living = await check_living()
-        #         if living:
-        #             self.emit('live_start', living)
-        #             logging.info('emit live_start event')
-        #         if self.counter == 15:
-        #             self.counter = 0
-        #             asyncio.create_task(self.check_video())
-        #         self.counter += 1
-        #     except Exception as e:
-        #         time.sleep(3600)
-        #         logging.exception(e)
-        # if interrupted:
-        #     break
-
-    async def check_live_start(self):
-        while True:
-            await asyncio.sleep(1)
-
-            if not self.start_flag:
-                continue
-            # print('flag true')
-            try:
-                # raise Exception('test')
-                now = get_cn_time()
-                if now.hour <= 18 and is_workday(now):
-                    continue
-                elif now.hour < 8:
-                    continue
-                live_info = await _check_live.check()
-                if live_info:
-                    self.emit('live_start', live_info)
-            except Exception as e:
-                logging.exception(e)
-                self.pause()
-                asyncio.get_event_loop().call_later(1800, self.resume)
 
     def pause(self):
-        self.start_flag = False
+        # self.start_flag = False
+        scheduler.pause()
         logging.info('polling paused')
 
     def resume(self):
-        self.start_flag = True
-        logging.info('polling resumed')
+        # self.start_flag = True
+        scheduler.resume()
+        scheduler.add_job(self._check_live_task,
+                          'date',
+                          run_date=get_cn_time() + timedelta(seconds=3))
+        scheduler.add_job(self.check_video_start,
+                          'date',
+                          run_date=get_cn_time() + timedelta(seconds=3))
+        logging.info('polling resuming in 3s')
+
+    async def check_live_start(self):
+        await self._check_live_task()
+
+    async def _check_live_task(self):
+        # if not self.start_flag:
+        #     return
+        try:
+            now = get_cn_time()
+            if now.hour <= 18 and is_workday(now):
+                return
+            elif now.hour < 8:
+                return
+            live_info = await _check_live.check()
+            if live_info:
+                self.emit('live_start', live_info)
+            # schedule job for next time
+            scheduler.add_job(self._check_live_task,
+                              'date',
+                              run_date=get_cn_time() + timedelta(seconds=5))
+            # print('next check live in 5s')
+        except Exception as e:
+            logging.exception(e)
+            self.pause()
+            asyncio.get_event_loop().call_later(randint(1800, 2000),
+                                                self.resume)
 
     async def check_video_start(self):
-        cnt = 11
-        while True:
-            await asyncio.sleep(1.1)
-            if not self.start_flag:
-                continue
-            cnt += 1
-            # print('polling video')
-            asyncio.get_event_loop().create_task(self._check_video(1))
-            if cnt % 3 == 0:
-                asyncio.get_event_loop().create_task(self._check_video(0))
-            if cnt >= 13:
-                asyncio.get_event_loop().create_task(self._check_video(-1))
-                cnt = 0
-            await asyncio.sleep(300)
+        for p in [1, 0, -1]:
+            await self._check_video_task(priority=p)
+            await asyncio.sleep(5)
 
-    async def _check_video(self, priority):
-        if priority == 0:
-            await asyncio.sleep(1)
-        elif priority == -1:
-            await asyncio.sleep(2)
+    async def _check_video_task(self, priority):
+        # if priority == 0:
+        #     await asyncio.sleep(1)
+        # elif priority == -1:
+        #     await asyncio.sleep(2)
         async for video in check_video(priority):
             logging.info('new video: {user} {title}'.format(user=video.author,
                                                             title=video.title))
             self.emit('video_update', video)
+        scheduler.add_job(self._check_video_task,
+                          'date',
+                          run_date=get_cn_time() +
+                          timedelta(minutes=5 - 3 * priority),
+                          args=[priority])
 
     def __job_listener(self, event):
+        print(event)
         if event.exception:
             logging.exception('event exception found: {exception}'.format(
                 exception=event.exception))
-            self.scheduler.pause()
-            asyncio.get_event_loop().call_later(1200, self.scheduler.resume)
+            scheduler.pause()
+            asyncio.get_event_loop().call_later(1200, scheduler.resume)
 
 
 polling = __Polling()

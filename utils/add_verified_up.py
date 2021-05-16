@@ -7,7 +7,7 @@ from models import VerifiedUp
 # ups = VerifiedUp.objects(tag='video', priority=1)
 # print(ups)
 
-u = user.get_user_info(2672015)
+u = user.get_user_info(10032115)
 up = VerifiedUp(uid=u['mid'],
                 roomid=u['live_room']['roomid'],
                 avatar=u['face'],

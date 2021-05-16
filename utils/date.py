@@ -4,14 +4,14 @@ import pytz
 tz_cn = pytz.timezone('Asia/Shanghai')
 
 
-def get_cn_time(dt: datetime = None):
+def get_cn_time(time: datetime = None):
     """
     return cn time now
     """
-    if not dt:
+    if not time:
         return datetime.now().astimezone(tz_cn)
     else:
-        return dt.astimezone(tz_cn)
+        return time.astimezone(tz_cn)
 
 
 def get_time_str(datetime: datetime):

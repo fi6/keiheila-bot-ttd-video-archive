@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from core import polling
 from ._instance import bot
 import json
-from models import Video
+from models import VideoUpdate
 
 if TYPE_CHECKING:
     from core.types import LiveInfo
@@ -19,7 +19,7 @@ async def live_notif(living: LiveInfo):
                                 type=10))
 
 
-async def video_notif(video: Video):
+async def video_notif(video: VideoUpdate):
     card = video.to_card()
     await bot.send(configs.channel.notif, json.dumps(card), type=10)
 

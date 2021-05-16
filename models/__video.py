@@ -1,16 +1,45 @@
-from typing import Any, List
-from utils.date import get_time_str
-from mongoengine import Document
-from mongoengine.fields import DateTimeField, DynamicField, IntField, ListField, ReferenceField, StringField
-from enum import Enum
 from datetime import datetime
+from enum import Enum
+from typing import Any, List
+
+from mongoengine import Document
+from mongoengine.fields import (DateTimeField, DynamicField, EnumField,
+                                IntField, ListField, ReferenceField,
+                                StringField)
+from utils.date import get_time_str
+
+__code_dict = {
+    'GUIDE': '通用攻略',
+    'CHARGUIDE': '角色攻略',
+    'REPLAY': '比赛录像',
+    'COMP': '精彩集锦',
+    'FUN': '趣味视频',
+    'INTRO': '背景知识'
+}
 
 
 class VideoTypes(Enum):
     GUIDE = 'GUIDE'
+    CHAR_GUIDE = 'CHARGUIDE'
+    REPLAY = 'REPLAY'
+    COMPILATION = 'COMP'
+    FUN = 'FUN'
+    INTRO = 'INTRO'
+    OTEHR = 'OTHER'
+
+    @staticmethod
+    def get_str(code) -> str:
+        result = __code_dict.get(code)
+        return result if result else '其他'
+
+    def get_code(string) -> str:
+        for code, cn in __code_dict:
+            if string == cn:
+                return code
+        return 'OTHER'
 
 
-class Video(Document):
+class _Video(Document):
     _raw = DynamicField()
     bvid = StringField(required=True, unique=True)
     title = StringField(required=True)
@@ -23,12 +52,17 @@ class Video(Document):
     up_ref = ReferenceField('VerifiedUp', db_field='up')
     dynamic = StringField()
     tags = ListField(StringField(), default=[])
-    meta = {'collection': 'videos'}
+    meta = {'collection': 'videos', 'allow_inheritance': True}
 
     # @property
     # def uid(self) -> int:
     #     return self.mid
 
+    def to_card(self) -> List[Any]:
+        raise NotImplementedError()
+
+
+class VideoUpdate(_Video):
     def to_card(self) -> List[Any]:
         # if self.up_ref and self.up_ref.kid:
         #     khl_id = self.up_ref.kid
@@ -87,3 +121,8 @@ class Video(Document):
                 }]
             }]
         }]
+
+
+class VideoArchive(_Video):
+    category = ListField(EnumField(VideoTypes), required=True)
+    char = ListField(IntField())
