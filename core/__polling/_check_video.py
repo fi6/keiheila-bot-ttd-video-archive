@@ -14,31 +14,37 @@ async def check_video(priority: int):
     ups: List[VerifiedUp] = VerifiedUp.objects(tag='video', priority=priority)
     uplist = [up.uid for up in ups]
     # calculate sleep time
-    sleep_time = 180 * (1.5 - priority * 0.5) / len(uplist) + 2 * random()
+    sleep_time = 90 * (1.5 - priority * 0.5) / len(uplist) + 2 * random()
     logging.info('priority: {p}, up list total: {total}'.format(
         p=priority, total=len(uplist)))
     for id in uplist:
+        logging.info('fetching videos for {id}'.format(id=id))
         existing = VideoUpdate.objects(
             uid=id).order_by('-publish').only('bvid')[:5]
-        bvids = [v.bvid for v in existing]
+        exist_bvids = [v.bvid for v in existing]
         cnt = 0
         for vid in await core.api.bilibili.get_user_videos(int(id)):
             vid = UserVideo(**vid)
             if cnt >= 3:
                 break
             cnt += 1
-            if vid.bvid in bvids:
+            if vid.bvid in exist_bvids:
                 continue
-            vid_all = await core.api.bilibili.get_video_info(vid.bvid)
-            tags = await core.api.bilibili.get_video_tags(vid.bvid)
-            tag_names: List[str] = [t['tag_name'] for t in tags]
-            if '任天堂明星大乱斗' not in tag_names:
-                logging.debug((vid_all, tag_names))
-                continue
-            vid_doc = create_video_doc(vid_all, tag_names)
-            # print(vid_doc)
-            yield vid_doc
-            logging.info('added new video: {vid}'.format(vid=vid_all))
+            try:
+                vid_all = await core.api.bilibili.get_video_info(vid.bvid)
+                tags = await core.api.bilibili.get_video_tags(vid.bvid)
+                tag_names: List[str] = [t['tag_name'] for t in tags]
+                if '任天堂明星大乱斗' not in tag_names:
+                    logging.debug((vid_all, tag_names))
+                    continue
+                vid_doc = create_video_doc(vid_all, tag_names)
+                # print(vid_doc)
+                yield vid_doc
+                logging.info('added new video: {vid}'.format(vid=vid_all))
+            except Exception as e:
+                logging.error(e)
+                logging.error(('exist_bvids:', exist_bvids))
+
             await asyncio.sleep(random())
 
         await asyncio.sleep(sleep_time)
