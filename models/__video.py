@@ -65,7 +65,7 @@ class _Video(Document):
 
 class VideoUpdate(_Video):
     char = ListField(StringField())
-    category = EnumField(VideoTypes, required=True)
+    category = EnumField(VideoTypes)
     msg = StringField()
 
     def to_card(self) -> List[Any]:
