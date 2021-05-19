@@ -1,1 +1,1 @@
-from . import channel, auth
+from . import channel, auth, roles  # noqa

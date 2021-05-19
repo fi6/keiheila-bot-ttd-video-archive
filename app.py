@@ -11,7 +11,7 @@ logging.basicConfig(
 def main():
     import core
     from functions import bot
-    asyncio.get_event_loop().create_task(core.polling.start())
+    # asyncio.get_event_loop().create_task(core.polling.start())
     bot.run()
 
 

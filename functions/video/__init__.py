@@ -9,7 +9,7 @@ from khl import Msg
 from khl.command import Command
 from khl.message import TextMsg
 from utils.db import archives
-from utils.link_parser import link_parser
+from .add import add_video
 
 from .._command import MyCommand
 
@@ -35,7 +35,7 @@ class VideoEntry(MyCommand):
     async def execute(self, msg: Msg, *args: str):
         if not len(args):
             return await self.entry(msg)
-        if args[0] == 'add':
+        if args[0] in ['add', '添加']:
             return await self.add(msg, list(args[1:]))
         if args[0] == 'create' and len(args) == 1:
             return await self.create(msg)
@@ -46,4 +46,9 @@ class VideoEntry(MyCommand):
         pass
 
     async def add(self, msg: TextMsg, args: List[str]):
-        pass
+        try:
+            await add_video(msg, args)
+        except ValueError as e:
+            await msg.ctx.bot.send(msg.ctx.channel.id,
+                                   e.args[0],
+                                   temp_target_id=msg.ctx.user.id)

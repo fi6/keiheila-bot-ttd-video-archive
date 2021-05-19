@@ -1,11 +1,15 @@
+import re
 from khl.message import TextMsg
 from ._entry import BotEntry
 from ._instance import bot  # noqa
 from .event import EventEntry
 from . import notification  # noqa
 from .video import VideoEntry
+from utils import link_parser
 
-bot_entry = BotEntry(EventEntry())
+video_entry = VideoEntry()
+
+bot_entry = BotEntry(EventEntry(), video_entry)
 bot.add_command(bot_entry)
 
 
@@ -18,3 +22,9 @@ async def entry(msg: TextMsg):
             return
         args = args[1:]
         await bot_entry.execute(msg, *args)
+    elif link_parser(msg.content, scheme_only=True) and re.search(
+            'bilibili', msg.content):
+        parse_result = link_parser(msg.content)
+        if not parse_result:
+            return
+        await video_entry.add(msg, [parse_result])

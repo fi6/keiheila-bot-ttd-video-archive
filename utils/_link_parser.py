@@ -8,7 +8,7 @@ from bilibili_api import video
 from datetime import datetime
 
 
-def link_parser(url: str) -> Union[str, None]:
+def link_parser(text: str, scheme_only=False) -> Union[str, None]:
     """Parse bvid from link
 
     Args:
@@ -17,7 +17,13 @@ def link_parser(url: str) -> Union[str, None]:
     Returns:
         Union[str, None]: bvid, if parse failed then return None
     """
+    match = re.search("(?P<url>https?://[^\s]+)", text)
+    if match is None:
+        return
+    url = match.group("url")
     if urlparse(url).scheme:
+        if scheme_only:
+            return url
         res = requests.get(url).request.url
         if not res:
             return None

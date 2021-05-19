@@ -52,6 +52,7 @@ class _Video(Document):
     up_ref = ReferenceField('VerifiedUp', db_field='up')
     dynamic = StringField()
     tags = ListField(StringField(), default=[])
+    remark = StringField()
     meta = {'collection': 'videos', 'allow_inheritance': True}
 
     # @property
@@ -124,5 +125,76 @@ class VideoUpdate(_Video):
 
 
 class VideoArchive(_Video):
-    category = ListField(EnumField(VideoTypes), required=True)
-    char = ListField(IntField())
+    category = EnumField(VideoTypes, required=True)
+    char = ListField(StringField())
+    referrer = StringField()
+    msg = StringField()
+
+    def to_card(self) -> List[Any]:
+        # if self.up_ref and self.up_ref.kid:
+        #     khl_id = self.up_ref.kid
+        khl_id = None
+        return [{
+            "type":
+            "card",
+            "theme":
+            "secondary",
+            "size":
+            "lg",
+            "modules": [{
+                "type": "header",
+                "text": {
+                    "type": "plain-text",
+                    "content": "视频档案库新增"
+                }
+            }, {
+                "type": "image-group",
+                "elements": [{
+                    "type": "image",
+                    "src": self.pic
+                }]
+            }, {
+                "type": "section",
+                "text": {
+                    "type":
+                    "kmarkdown",
+                    "content":
+                    "**[{title}]({url})**\n作者: {author}".format(
+                        url=f'https://www.bilibili.com/video/{self.bvid}',
+                        title=self.title,
+                        author=f'(met){khl_id}(met)'
+                        if khl_id else self.author,
+                    )
+                }
+            }]
+        }, {
+            "type":
+            "card",
+            "theme":
+            "secondary",
+            "size":
+            "lg",
+            "modules": [{
+                "type": "section",
+                "text": {
+                    "type":
+                    "kmarkdown",
+                    "content":
+                    "{desc}".format(desc=self.desc if len(self.desc) <= 152
+                                    else self.desc[:150] + '...', ) +
+                    "\n发布于：{pubdate}".format(
+                        pubdate=get_time_str(self.publish))
+                }
+            }, {
+                "type": "divider"
+            }, {
+                "type": "section",
+                "text": {
+                    "type":
+                    "kmarkdown",
+                    "content":
+                    "由(met){user}(met)推荐".format(user=self.referrer) +
+                    '\n推荐语：{remark}'.format(remark=self.remark)
+                }
+            }]
+        }]
