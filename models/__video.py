@@ -40,6 +40,7 @@ class VideoTypes(Enum):
 
 
 class _Video(Document):
+    # _cls = StringField()
     _raw = DynamicField()
     bvid = StringField(required=True, unique=True)
     title = StringField(required=True)
@@ -54,6 +55,7 @@ class _Video(Document):
     tags = ListField(StringField(), default=[])
     remark = StringField()
     meta = {'collection': 'videos', 'allow_inheritance': True}
+    # meta = {'collection': 'videos'}
 
     # @property
     # def uid(self) -> int:
