@@ -1,7 +1,7 @@
 import logging
 import asyncio
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format=
     '%(asctime)s.%(msecs)03d[%(levelname)s]%(module)s>%(funcName)s:%(message)s',
     datefmt='%y-%m-%d %H:%M:%S',
