@@ -7,6 +7,7 @@ from typing import List
 
 from core.types import UserVideo
 from models import VideoUpdate, VerifiedUp
+from models.__video import _Video
 
 
 async def check_video(priority: int):
@@ -19,8 +20,7 @@ async def check_video(priority: int):
         p=priority, total=len(uplist)))
     for id in uplist:
         logging.info('fetching videos for {id}'.format(id=id))
-        existing = VideoUpdate.objects(
-            uid=id).order_by('-publish').only('bvid')[:5]
+        existing = _Video.objects(uid=id).order_by('-publish').only('bvid')[:5]
         exist_bvids = [v.bvid for v in existing]
         cnt = 0
         for vid in await core.api.bilibili.get_user_videos(int(id)):

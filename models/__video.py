@@ -64,6 +64,10 @@ class _Video(Document):
 
 
 class VideoUpdate(_Video):
+    char = ListField(StringField())
+    category = EnumField(VideoTypes, required=True)
+    msg = StringField()
+
     def to_card(self) -> List[Any]:
         # if self.up_ref and self.up_ref.kid:
         #     khl_id = self.up_ref.kid
