@@ -131,3 +131,4 @@ dmypy.json
 .vscode
 configs/**/auth*
 test.py
+video_dl/

@@ -36,7 +36,7 @@ class VideoEntry(MyCommand):
         if args[0] == 'search':
             return await self.search(msg, list(args[1:]))
 
-    async def entry(self, msg: Msg):
+    async def entry(self, msg: Msg) -> str:
         pass
 
     async def add(self, msg: Msg, args: List[str]):
