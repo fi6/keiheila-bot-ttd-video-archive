@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Any, Dict, List
 from urllib.parse import urlparse
+import cpca
 
 from mongoengine import Document
 from mongoengine.document import EmbeddedDocument
@@ -22,15 +23,30 @@ GREATER_ADMIN_AREA = {
 
 class _Address(EmbeddedDocument):
     province = StringField(required=True)
-    city = StringField(required=True)
+    city = StringField()
     district = StringField()
     detail = StringField()
-    code = IntField()
+    code = IntField(required=True)
 
     def to_string(self):
         if self.city == '市辖区':
             return ' '.join([self.province, self.district, self.detail])
-        return ' '.join([self.province, self.city, self.district, self.detail])
+        return ' '.join(
+            list(
+                filter(
+                    None,
+                    [self.province, self.city, self.district, self.detail])))
+
+    @classmethod
+    def from_str(cls, input):
+        df = cpca.transform([input])
+        result: dict = df.iloc[0].to_dict()
+        if result['省']:
+            return cls(province=result['省'],
+                       city=result['市'],
+                       district=result.get('区'),
+                       detail=result.get('地址'),
+                       code=result.get('adcode'))
 
     @property
     def _greater_admin_area(self):

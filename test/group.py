@@ -1,9 +1,9 @@
 import sys
 sys.path.append('.')
 
+from functions.group.text import get_group_passage
 from models.group import Group, GroupType, JoinType
 from functions.event.parser import get_address
-from functions.group.list import get_group_dict
 
 # group = Group()
 # group.name = '北京 BeijingSmash'
@@ -15,4 +15,5 @@ from functions.group.list import get_group_dict
 
 # print(Group.objects().order_by('address.code'))
 # print(get_address('上海'))
-print(get_group_dict())
+
+get_group_passage()

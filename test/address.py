@@ -6,7 +6,7 @@ import pandas
 
 from models.__event import _Address
 
-df: pandas.DataFrame = cpca.transform(['长春市'])
+df: pandas.DataFrame = cpca.transform(['天津市'])
 result = df.iloc[0].to_dict()
 add = _Address(province=result['省'],
                city=result['市'],

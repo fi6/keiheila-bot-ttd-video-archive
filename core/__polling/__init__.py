@@ -1,8 +1,6 @@
 import asyncio
 from datetime import datetime, timedelta
 from random import randint
-import time
-from apscheduler.util import timedelta_seconds
 
 from chinese_calendar.utils import is_workday
 from utils.date import get_cn_time
@@ -11,10 +9,8 @@ from pyee import AsyncIOEventEmitter
 
 from . import _check_live
 from ._check_video import check_video
-import signal
 import logging
 from .__scheduler import scheduler
-from chinese_calendar import is_holiday
 
 # def signal_handler(signal, frame):
 #     global interrupted
