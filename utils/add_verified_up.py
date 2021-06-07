@@ -7,9 +7,11 @@ from models import VerifiedUp
 # ups = VerifiedUp.objects(tag='video', priority=1)
 # print(ups)
 
-bilibili_id = 67674065
-kaiheila_id = 2771269656
-live = False
+# mandom: 853821709  con：1404213443
+
+bilibili_id = 390851181
+kaiheila_id = 1404213443
+live = True
 priority = -1  # -1, 0, 1 low->high
 
 u = user.get_user_info(int(bilibili_id))

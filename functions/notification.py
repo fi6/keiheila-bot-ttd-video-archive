@@ -21,6 +21,7 @@ async def live_notif(living: LiveInfo):
 
 
 async def video_notif(video: VideoUpdate):
+    video = VideoUpdate.objects.get(id=video.id)
     card = video.to_card()
     await bot.send(configs.channel.chat, json.dumps(card), type=10)
     await bot.send(configs.channel.notif, json.dumps(card), type=10)

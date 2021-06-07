@@ -1,7 +1,12 @@
-import logging
 import asyncio
+import logging
+
+import configs
+
+logging_level = logging.DEBUG if configs.auth.khl_client.startswith(
+    'yy') else logging.INFO
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging_level,
     format=
     '%(asctime)s.%(msecs)03d[%(levelname)s]%(module)s>%(funcName)s:%(message)s',
     datefmt='%y-%m-%d %H:%M:%S',
