@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
+import logging
 from typing import Any, List
 
 from mongoengine import Document
 from mongoengine.fields import (DateTimeField, DynamicField, EnumField,
-                                IntField, ListField, ReferenceField,
+                                IntField, LazyReferenceField, ListField,
                                 StringField)
 from utils.date import get_time_str
 
@@ -52,7 +53,7 @@ class _Video(Document):
     publish = DateTimeField()
     duration = IntField()
     uid = IntField(required=True, db_field='uid')
-    up_ref = ReferenceField('VerifiedUp', db_field='up')
+    up_ref = LazyReferenceField('VerifiedUp', db_field='up', passthrough=True)
     dynamic = StringField()
     tags = ListField(StringField(), default=[])
     remark = StringField()
@@ -83,7 +84,8 @@ class VideoUpdate(_Video):
     def _khl_id(self) -> str | None:
         try:
             return self.up_ref.kid
-        except Exception:
+        except Exception as e:
+            logging.error('fail to get khl_id for video update {}'.format(e))
             return None
 
     def to_card(self) -> List[Any]:
@@ -124,12 +126,22 @@ class VideoUpdate(_Video):
                     "type":
                     "kmarkdown",
                     "content":
-                    "**[{title}]({url})**\n作者: {author}".format(
+                    "**[{title}]({url})**".format(
                         url=f'https://www.bilibili.com/video/{self.bvid}',
-                        title=self.title,
-                        author=self._card_author,
-                    )
+                        title=self.title)
                 }
+            }, {
+                "type":
+                "context",
+                "elements": [{
+                    "type": "image",
+                    "src": self.up_ref.avatar
+                }, {
+                    "type":
+                    "kmarkdown",
+                    "content":
+                    "作者: {author}".format(author=self._card_author)
+                }]
             }, {
                 "type": "divider"
             }, {

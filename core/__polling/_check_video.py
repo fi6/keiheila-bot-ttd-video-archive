@@ -70,6 +70,6 @@ def create_video_doc(vid_all,
     # except Exception:
     #     pass
     if verified_up:
-        vid_doc.up_ref = verified_up.pk
+        vid_doc.up_ref = verified_up
     vid_doc.save()
     return vid_doc
