@@ -91,6 +91,20 @@ class VideoUpdate(_Video):
             "type":
             "card",
             "theme":
+            "primary",
+            "size":
+            "lg",
+            "modules": [{
+                "type": "image-group",
+                "elements": [{
+                    "type": "image",
+                    "src": self.pic,
+                }]
+            }]
+        }, {
+            "type":
+            "card",
+            "theme":
             "secondary",
             "size":
             "lg",
@@ -100,12 +114,6 @@ class VideoUpdate(_Video):
                     "type": "plain-text",
                     "content": "视频更新"
                 }
-            }, {
-                "type": "image-group",
-                "elements": [{
-                    "type": "image",
-                    "src": self.pic,
-                }]
             }, {
                 "type": "section",
                 "text": {
