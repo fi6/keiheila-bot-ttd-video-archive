@@ -91,7 +91,9 @@ class VideoUpdate(_Video):
             "type":
             "card",
             "theme":
-            "primary",
+            "info",
+            'color':
+            '#FB7299',
             "size":
             "lg",
             "modules": [{
@@ -105,7 +107,9 @@ class VideoUpdate(_Video):
             "type":
             "card",
             "theme":
-            "secondary",
+            "info",
+            'color':
+            '#FB7299',
             "size":
             "lg",
             "modules": [{
