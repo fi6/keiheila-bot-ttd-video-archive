@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 async def live_notif(living: LiveInfo):
     logging.info('received live start event')
     card = living.to_card()
+    await bot.send(configs.channel.chat, json.dumps(card), type=10)
     logging.info(await bot.send(configs.channel.notif,
                                 json.dumps(card),
                                 type=10))
@@ -21,6 +22,7 @@ async def live_notif(living: LiveInfo):
 
 async def video_notif(video: VideoUpdate):
     card = video.to_card()
+    await bot.send(configs.channel.chat, json.dumps(card), type=10)
     await bot.send(configs.channel.notif, json.dumps(card), type=10)
 
 
