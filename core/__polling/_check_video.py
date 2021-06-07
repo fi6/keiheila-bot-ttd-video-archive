@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import core
 from datetime import datetime
@@ -18,7 +20,8 @@ async def check_video(priority: int):
     sleep_time = 90 * (1.5 - priority * 0.5) / len(uplist) + 2 * random()
     logging.info('priority: {p}, up list total: {total}'.format(
         p=priority, total=len(uplist)))
-    for id in uplist:
+    for up in ups:
+        id = up.uid
         logging.info('fetching videos for {id}'.format(id=id))
         existing = _Video.objects(
             uid=int(id)).order_by('-publish').only('bvid')[:5]
@@ -35,10 +38,10 @@ async def check_video(priority: int):
                 vid_all = await core.api.bilibili.get_video_info(vid.bvid)
                 tags = await core.api.bilibili.get_video_tags(vid.bvid)
                 tag_names: List[str] = [t['tag_name'] for t in tags]
-                if '任天堂明星大乱斗' not in tag_names:
+                if '任天堂明星大乱斗' not in tag_names and not up.priority == 1:
                     logging.debug((vid_all, tag_names))
                     continue
-                vid_doc = create_video_doc(vid_all, tag_names)
+                vid_doc = create_video_doc(vid_all, tag_names, verified_up=up)
                 # print(vid_doc)
                 yield vid_doc
                 logging.info('added new video: {vid}'.format(vid=vid_all))
@@ -51,7 +54,9 @@ async def check_video(priority: int):
         await asyncio.sleep(sleep_time)
 
 
-def create_video_doc(vid_all, tag_names):
+def create_video_doc(vid_all,
+                     tag_names,
+                     verified_up: VerifiedUp | None = None):
     fields = VideoUpdate._fields.keys()
     vid_doc = VideoUpdate(**{k: v for k, v in vid_all.items() if k in fields})
     vid_doc._raw = vid_all
@@ -59,10 +64,12 @@ def create_video_doc(vid_all, tag_names):
     vid_doc.uid = vid_all['owner']['mid']
     vid_doc.tags = tag_names
     vid_doc.author = vid_all['owner']['name']
-    try:
-        up = VerifiedUp.objects.get(uid=vid_doc.uid)
-        vid_doc.up_ref = up.pk
-    except Exception:
-        pass
+    # try:
+    #     up = VerifiedUp.objects.get(uid=vid_doc.uid)
+    #     vid_doc.up_ref = up.pk
+    # except Exception:
+    #     pass
+    if verified_up:
+        vid_doc.up_ref = verified_up.pk
     vid_doc.save()
     return vid_doc

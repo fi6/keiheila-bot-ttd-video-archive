@@ -15,6 +15,6 @@ async def async_logging(x):
         logging.exception(e)
 
 
-# bot.on_raw_event(async_logging)
+bot.on_raw_event(async_logging)
 
 logging.debug('bot on raw event success')
