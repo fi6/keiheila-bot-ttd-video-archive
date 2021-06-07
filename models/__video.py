@@ -55,6 +55,7 @@ class _Video(Document):
     tags = ListField(StringField(), default=[])
     remark = StringField()
     meta = {'collection': 'videos', 'allow_inheritance': True}
+
     # meta = {'collection': 'videos'}
 
     # @property
@@ -71,9 +72,11 @@ class VideoUpdate(_Video):
     msg = StringField()
 
     def to_card(self) -> List[Any]:
-        # if self.up_ref and self.up_ref.kid:
-        #     khl_id = self.up_ref.kid
         khl_id = None
+        try:
+            khl_id = self.up_ref.kid
+        except Exception:
+            pass
         return [{
             "type":
             "card",
