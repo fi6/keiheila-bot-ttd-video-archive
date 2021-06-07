@@ -20,7 +20,8 @@ async def check_video(priority: int):
         p=priority, total=len(uplist)))
     for id in uplist:
         logging.info('fetching videos for {id}'.format(id=id))
-        existing = _Video.objects(uid=int(id)).order_by('-publish').only('bvid')[:5]
+        existing = _Video.objects(
+            uid=int(id)).order_by('-publish').only('bvid')[:5]
         exist_bvids = [v.bvid for v in existing]
         cnt = 0
         for vid in await core.api.bilibili.get_user_videos(int(id)):
@@ -58,8 +59,10 @@ def create_video_doc(vid_all, tag_names):
     vid_doc.uid = vid_all['owner']['mid']
     vid_doc.tags = tag_names
     vid_doc.author = vid_all['owner']['name']
-    up = VerifiedUp.objects(uid=vid_doc.uid)
-    if len(up):
-        vid_doc.up_ref = up[0]
+    try:
+        up = VerifiedUp.objects.get(uid=vid_doc.uid)
+        vid_doc.up_ref = up.pk
+    except Exception:
+        pass
     vid_doc.save()
     return vid_doc

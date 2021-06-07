@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Any, Dict, List
+from models import VerifiedUp
 
 
 class LiveInfo(object):
@@ -34,6 +35,10 @@ class LiveInfo(object):
         self.roomid = int(room['roomid'])
 
     def to_card(self) -> List[Dict[str, Any]]:
+        try:
+            up: VerifiedUp = VerifiedUp.objects.get(uid=self.mid)
+        except Exception:
+            up = None
         return [{
             "type":
             "card",
@@ -50,8 +55,12 @@ class LiveInfo(object):
             }, {
                 "type": "section",
                 "text": {
-                    "type": "kmarkdown",
-                    "content": "**{user}刚刚开播了！**".format(user=self.name)
+                    "type":
+                    "kmarkdown",
+                    "content":
+                    "**{user}刚刚开播了！**".format(
+                        user=self.
+                        name if not up else f'{self.name} (met){up.kid}(met)')
                 },
                 "mode": "left",
                 "accessory": {
@@ -81,8 +90,8 @@ class LiveInfo(object):
                     "type":
                     "kmarkdown",
                     "content":
-                    "直播间标题：\n**{title}**\n[点击前往观看]({url})".format(title=self.title,
-                                                              url=self.url)
+                    "直播间标题：\n**{title}**\n[点击前往观看]({url})".format(
+                        title=self.title, url=self.url)
                 }
             }, {
                 "type": "image-group",

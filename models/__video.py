@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime
 from enum import Enum
 from typing import Any, List
@@ -71,12 +73,20 @@ class VideoUpdate(_Video):
     category = EnumField(VideoTypes)
     msg = StringField()
 
-    def to_card(self) -> List[Any]:
-        khl_id = None
+    @property
+    def _card_author(self) -> str:
+
+        return f'{self.author} (met){self._khl_id}(met)' if self._khl_id else str(
+            self.author)
+
+    @property
+    def _khl_id(self) -> str | None:
         try:
-            khl_id = self.up_ref.kid
+            return self.up_ref.kid
         except Exception:
-            pass
+            return None
+
+    def to_card(self) -> List[Any]:
         return [{
             "type":
             "card",
@@ -105,8 +115,7 @@ class VideoUpdate(_Video):
                     "**[{title}]({url})**\n作者: {author}".format(
                         url=f'https://www.bilibili.com/video/{self.bvid}',
                         title=self.title,
-                        author=f'(met){khl_id}(met)'
-                        if khl_id else self.author,
+                        author=self._card_author,
                     )
                 }
             }, {
