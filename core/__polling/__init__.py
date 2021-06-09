@@ -79,7 +79,7 @@ class __Polling(AsyncIOEventEmitter):
             # schedule job for next time
             scheduler.add_job(self._check_live_task,
                               'date',
-                              run_date=get_cn_time() + timedelta(seconds=5))
+                              run_date=get_cn_time() + timedelta(seconds=10))
             # print('next check live in 5s')
         except Exception as e:
             logging.exception(e)
@@ -90,22 +90,29 @@ class __Polling(AsyncIOEventEmitter):
     async def check_video_start(self):
         for p in [1, 0, -1]:
             await self._check_video_task(priority=p)
-            await asyncio.sleep(5)
+            await asyncio.sleep(20)
 
     async def _check_video_task(self, priority):
         # if priority == 0:
         #     await asyncio.sleep(1)
         # elif priority == -1:
         #     await asyncio.sleep(2)
-        async for video in check_video(priority):
-            logging.info('new video: {user} {title}'.format(user=video.author,
-                                                            title=video.title))
-            self.emit('video_update', video)
-        scheduler.add_job(self._check_video_task,
-                          'date',
-                          run_date=get_cn_time() +
-                          timedelta(minutes=5 - 3 * priority),
-                          args=[priority])
+        try:
+            async for video in check_video(priority):
+                logging.info('new video: {user} {title}'.format(
+                    user=video.author, title=video.title))
+                self.emit('video_update', video)
+            scheduler.add_job(self._check_video_task,
+                              'date',
+                              run_date=get_cn_time() +
+                              timedelta(minutes=10 - 5 * priority),
+                              args=[priority])
+        except Exception as e:
+            logging.error('error found when checking video')
+            logging.exception(e)
+            self.pause()
+            asyncio.get_event_loop().call_later(randint(1800, 2000),
+                                                self.resume)
 
     def __job_listener(self, event):
         print(event)
