@@ -17,7 +17,7 @@ async def check_video(priority: int):
     ups: List[VerifiedUp] = VerifiedUp.objects(tag='video', priority=priority)
     uplist = [up.uid for up in ups]
     # calculate sleep time
-    sleep_time = 90 * (1.5 - priority * 0.5) / len(uplist) + 2 * random()
+    sleep_time = 3 + 2 * (random() - priority)
     logging.info('priority: {p}, up list total: {total}'.format(
         p=priority, total=len(uplist)))
     for up in ups:

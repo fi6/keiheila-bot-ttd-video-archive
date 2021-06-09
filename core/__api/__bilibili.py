@@ -1,4 +1,5 @@
 from datetime import date, datetime, timedelta
+from random import random
 from typing import Any, Callable, Dict, List
 from bilibili_api import live, user, video
 from core.types import LiveInfo
@@ -15,7 +16,7 @@ class __Bilibili():
     async def check_frequency(self):
         if datetime.now() - self.last_time < timedelta(seconds=self.interval):
             self.last_time = datetime.now()
-            await asyncio.sleep(self.interval)
+            await asyncio.sleep(self.interval + self.jitter * random())
         else:
             self.last_time = datetime.now()
         return
