@@ -22,7 +22,7 @@ async def check_video(priority: int):
         p=priority, total=len(uplist)))
     for up in ups:
         id = up.uid
-        logging.info('fetching videos for {id}'.format(id=id))
+        logging.info('fetching videos for {}'.format((up.nickname, id)))
         existing = _Video.objects(
             uid=int(id)).order_by('-publish').only('bvid')[:5]
         exist_bvids = [v.bvid for v in existing]

@@ -23,7 +23,7 @@ async def check() -> LiveInfo | None:
         elif last_info.live_status != 1:
             info = LiveInfo(await core.api.bilibili.get_live_info(id))
             living_cache.set(id, info)
-            logging.debug('checking live info for {id}'.format(id=id))
+            logging.info('checking live info for {id}'.format(id=id))
             # logging.debug(living_cache.expire_times())
             if info.live_status == 1:
                 # just start living
