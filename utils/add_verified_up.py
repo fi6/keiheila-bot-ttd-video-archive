@@ -10,11 +10,9 @@ from functions import bot
 # ups = VerifiedUp.objects(tag='video', priority=1)
 # print(ups)
 
-# mandom: 853821709
-
-bilibili_id = 47229249
-kaiheila_id = 1861915305
-live = False
+bilibili_id = 20151162
+kaiheila_id = 853821709
+live = True
 priority = -1  # -1, 0, 1 low->high
 
 u = user.get_user_info(int(bilibili_id))
@@ -27,7 +25,7 @@ try:
               sign=u['sign'],
               priority=priority,
               tag=['video'] if not live else ['video', 'live'],
-              kid=str(kaiheila_id))
+              kid=str(kaiheila_id) if kaiheila_id else None)
 except DoesNotExist:
     up = VerifiedUp(uid=u['mid'],
                     roomid=u['live_room']['roomid'],
@@ -36,6 +34,6 @@ except DoesNotExist:
                     sign=u['sign'],
                     priority=priority,
                     tag=['video'] if not live else ['video', 'live'],
-                    kid=str(kaiheila_id))
+                    kid=str(kaiheila_id) if kaiheila_id else None)
 up.save()
 print(up.to_mongo())

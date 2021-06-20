@@ -97,7 +97,7 @@ class VideoUpdate(_Video):
             'color':
             '#FB7299',
             "size":
-            "lg",
+            "sm",
             "modules": [{
                 "type": "image-group",
                 "elements": [{
