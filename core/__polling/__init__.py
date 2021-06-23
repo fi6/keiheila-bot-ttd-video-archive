@@ -69,10 +69,10 @@ class __Polling(AsyncIOEventEmitter):
         #     return
         try:
             now = get_cn_time()
-            # if now.hour <= 18 and is_workday(now):
-            #     return
-            # elif now.hour < 8:
-            #     return
+            if now.hour <= 18 and is_workday(now):
+                return
+            elif now.hour < 8:
+                return
             logging.info('check live task start')
             live_info = await _check_live.check()
             if live_info:
@@ -80,7 +80,7 @@ class __Polling(AsyncIOEventEmitter):
             # schedule job for next time
             scheduler.add_job(self._check_live_task,
                               'date',
-                              run_date=get_cn_time() + timedelta(seconds=10))
+                              run_date=get_cn_time() + timedelta(seconds=90))
             # print('next check live in 5s')
         except Exception as e:
             logging.exception(e)

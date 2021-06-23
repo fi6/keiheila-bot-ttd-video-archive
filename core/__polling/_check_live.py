@@ -15,7 +15,7 @@ living_cache = Cache(ttl=300, default=None)
 async def check() -> LiveInfo | None:
     ups: List[VerifiedUp] = VerifiedUp.objects(tag='live')
     roomlist = list(filter(lambda x: x.roomid, ups))
-    sleep_time = 5 + random.random() * 0.5
+    sleep_time = 10 + random.random() * 0.5
     for i, up in enumerate(roomlist):
         last_info: LiveInfo | None = living_cache.get(up.roomid)
         if not last_info:
