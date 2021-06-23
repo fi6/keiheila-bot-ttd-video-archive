@@ -1,29 +1,34 @@
 from __future__ import annotations
 import asyncio
+from typing import List
 import core
 import logging
 
-from core.uplist import roomlist
 from core.types import LiveInfo
 from cacheout import Cache
+from models import VerifiedUp
 import random
 
 living_cache = Cache(ttl=300, default=None)
 
 
 async def check() -> LiveInfo | None:
+    ups: List[VerifiedUp] = VerifiedUp.objects(tag='live')
+    roomlist = list(filter(lambda x: x.roomid, ups))
     sleep_time = 5 + random.random() * 0.5
-    for i, id in enumerate(roomlist.values()):
-        last_info: LiveInfo | None = living_cache.get(id)
+    for i, up in enumerate(roomlist):
+        last_info: LiveInfo | None = living_cache.get(up.roomid)
         if not last_info:
-            info = LiveInfo(await core.api.bilibili.get_live_info(id))
-            logging.info('{mid} expired in cache'.format(mid=info.mid))
-            living_cache.set(id, info)
+            info = LiveInfo(await core.api.bilibili.get_live_info(up.roomid))
+            logging.info('{} expired in cache'.format(
+                (up.nickname, up.roomid)))
+            living_cache.set(up.roomid, info)
             continue
         elif last_info.live_status != 1:
-            info = LiveInfo(await core.api.bilibili.get_live_info(id))
-            living_cache.set(id, info)
-            logging.info('checking live info for {id}'.format(id=id))
+            info = LiveInfo(await core.api.bilibili.get_live_info(up.roomid))
+            living_cache.set(up.roomid, info)
+            logging.info('checking live info for {}'.format(
+                (up.nickname, up.roomid)))
             # logging.debug(living_cache.expire_times())
             if info.live_status == 1:
                 # just start living
@@ -31,7 +36,7 @@ async def check() -> LiveInfo | None:
         elif last_info.live_status == 1:
             pass
             # logging.debug('living')
-        if i == len(roomlist.values()) - 1:
+        if i == len(roomlist) - 1:
             break
         await asyncio.sleep(sleep_time)
 

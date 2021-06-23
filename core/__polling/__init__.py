@@ -69,10 +69,11 @@ class __Polling(AsyncIOEventEmitter):
         #     return
         try:
             now = get_cn_time()
-            if now.hour <= 18 and is_workday(now):
-                return
-            elif now.hour < 8:
-                return
+            # if now.hour <= 18 and is_workday(now):
+            #     return
+            # elif now.hour < 8:
+            #     return
+            logging.info('check live task start')
             live_info = await _check_live.check()
             if live_info:
                 self.emit('live_start', live_info)
