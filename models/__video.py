@@ -6,9 +6,9 @@ import logging
 from typing import Any, List
 
 from mongoengine import Document
-from mongoengine.fields import (DateTimeField, DynamicField, EnumField,
-                                IntField, LazyReferenceField, ListField,
-                                StringField)
+from mongoengine.fields import (BooleanField, DateTimeField, DynamicField,
+                                EnumField, IntField, LazyReferenceField,
+                                ListField, StringField)
 from utils.date import get_time_str
 
 __code_dict = {
@@ -47,19 +47,19 @@ class _Video(Document):
     _raw = DynamicField()
     bvid = StringField(required=True, unique=True)
     title = StringField(required=True)
+    desc: str = StringField(required=True)
+    uid = IntField(required=True, db_field='uid')
     pic = StringField()
-    desc = StringField(required=True)
     author = StringField()
     publish = DateTimeField()
     duration = IntField()
-    uid = IntField(required=True, db_field='uid')
     up_ref = LazyReferenceField('VerifiedUp', db_field='up', passthrough=True)
     dynamic = StringField()
     tags = ListField(StringField(), default=[])
     remark = StringField()
+    original = BooleanField()
+    source = StringField()
     meta = {'collection': 'videos', 'allow_inheritance': True}
-
-    # meta = {'collection': 'videos'}
 
     # @property
     # def uid(self) -> int:
@@ -164,6 +164,10 @@ class VideoUpdate(_Video):
                 }]
             }]
         }]
+
+
+class VideoRecord(_Video):
+    pass
 
 
 class VideoArchive(_Video):

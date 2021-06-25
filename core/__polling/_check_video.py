@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import re
 import core
 from datetime import datetime
 import logging
@@ -64,6 +65,14 @@ def create_video_doc(vid_all,
     vid_doc.uid = vid_all['owner']['mid']
     vid_doc.tags = tag_names
     vid_doc.author = vid_all['owner']['name']
+    if vid_all['copyright'] == 1:
+        vid_doc.original = True
+    else:
+        vid_doc.original = False
+        source = re.search(r'^http.+?(?:$|\n)', vid_doc.desc)
+        if not source:
+            source = re.search(r'^.+?(?:$|\n)', vid_doc.desc)
+        vid_doc.source = source.group(0).strip() if source else ''
     # try:
     #     up = VerifiedUp.objects.get(uid=vid_doc.uid)
     #     vid_doc.up_ref = up.pk

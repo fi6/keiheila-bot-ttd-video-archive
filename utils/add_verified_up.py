@@ -10,9 +10,9 @@ from functions import bot
 # ups = VerifiedUp.objects(tag='video', priority=1)
 # print(ups)
 
-bilibili_id = 20151162
-kaiheila_id = 853821709
-live = True
+bilibili_id = 296820
+kaiheila_id = 2553283223
+live = False
 priority = -1  # -1, 0, 1 low->high
 
 u = user.get_user_info(int(bilibili_id))
