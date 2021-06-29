@@ -1,7 +1,7 @@
 import logging
 import re
 from mongoengine.errors import DoesNotExist
-from models import _Video, VideoRecord
+from models import _Video, VideoRecord, VerifiedUp
 
 
 def add_user_video(data: dict, smash_only=True):
@@ -12,6 +12,7 @@ def add_user_video(data: dict, smash_only=True):
         video._raw = data
         video.bvid = data['bvid']
         video.uid = data['mid']
+        video.up_ref = VerifiedUp.objects.get(uid=video.uid)
 
     video.title = data['title']
     video.pic = data['pic']
