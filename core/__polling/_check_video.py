@@ -25,7 +25,7 @@ async def check_video(priority: int):
         id = up.uid
         logging.info('fetching videos for {}'.format((up.nickname, id)))
         existing = _Video.objects(
-            uid=int(id)).order_by('-publish').only('bvid')[:10]
+            uid=int(id)).order_by('-publish').only('bvid')[:12]
         exist_bvids = [v.bvid for v in existing]
         cnt = 0
         for vid in await core.api.bilibili.get_user_videos(int(id)):
@@ -73,11 +73,6 @@ def create_video_doc(vid_all,
         if not source:
             source = re.search(r'^.+?(?:$|\n)', vid_doc.desc)
         vid_doc.source = source.group(0).strip() if source else ''
-    # try:
-    #     up = VerifiedUp.objects.get(uid=vid_doc.uid)
-    #     vid_doc.up_ref = up.pk
-    # except Exception:
-    #     pass
     if verified_up:
         vid_doc.up_ref = verified_up
     vid_doc.save()
