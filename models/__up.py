@@ -1,3 +1,4 @@
+from enum import unique
 from typing import List
 from mongoengine import Document
 from mongoengine.fields import IntField, ListField, StringField
@@ -14,7 +15,7 @@ class Up(Document):
 
 class VerifiedUp(Up):
     follower_role: str = IntField(db_field='follower')
-    kid: str = StringField()
+    kid: str = StringField(unique=True)
     # 0: normal, -1: below, 1: high
     priority: int = IntField()
     tag: List[str] = ListField(StringField())

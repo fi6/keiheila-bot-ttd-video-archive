@@ -106,7 +106,7 @@ class __Polling(AsyncIOEventEmitter):
             scheduler.add_job(self._check_video_task,
                               'date',
                               run_date=get_cn_time() +
-                              timedelta(minutes=10 - 5 * priority),
+                              timedelta(minutes=20 - 10 * priority),
                               args=[priority])
         except Exception as e:
             logging.error('error found when checking video')

@@ -25,12 +25,12 @@ async def check_video(priority: int):
         id = up.uid
         logging.info('fetching videos for {}'.format((up.nickname, id)))
         existing = _Video.objects(
-            uid=int(id)).order_by('-publish').only('bvid')[:12]
+            uid=int(id)).order_by('-publish').only('bvid')[:16]
         exist_bvids = [v.bvid for v in existing]
         cnt = 0
         for vid in await core.api.bilibili.get_user_videos(int(id)):
             vid = UserVideo(**vid)
-            if cnt >= 10:
+            if cnt >= 8:
                 break
             cnt += 1
             if vid.bvid in exist_bvids:
