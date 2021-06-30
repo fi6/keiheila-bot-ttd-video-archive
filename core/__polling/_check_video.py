@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import asyncio
 import re
+
+from pymongo.errors import DuplicateKeyError
 import core
 from datetime import datetime
 import logging
@@ -35,6 +37,7 @@ async def check_video(priority: int):
             cnt += 1
             if vid.bvid in exist_bvids:
                 continue
+            vid_all = None
             try:
                 vid_all = await core.api.bilibili.get_video_info(vid.bvid)
                 tags = await core.api.bilibili.get_video_tags(vid.bvid)
@@ -46,6 +49,13 @@ async def check_video(priority: int):
                 # print(vid_doc)
                 yield vid_doc
                 logging.info('added new video: {vid}'.format(vid=vid_all))
+            except DuplicateKeyError:
+                video: _Video = _Video.objects.get(bvid=vid.bvid)
+                if vid_all is not None:
+                    video._raw = vid_all
+                    video.author = vid_all['owner']['name']
+                    video.publish = datetime.fromtimestamp(vid_all['pubdate'])
+                    video.save()
             except Exception as e:
                 logging.error(e)
                 logging.error(('exist_bvids:', exist_bvids))
