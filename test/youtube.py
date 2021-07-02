@@ -32,7 +32,8 @@ ydl_opts = {
     'writeautomaticsub': True,
     'subtitleslangs': ['en'],
     'subtitlesformat': 'vtt',
-    'outtmpl': 'video_dl/%(id)s-%(title)s.%(ext)s'
+    'outtmpl': 'video_dl/%(id)s-%(title)s.%(ext)s',
+    'getthumbnail': True
     # 'progress_hooks': [my_hook],
 }
 
@@ -47,11 +48,21 @@ sub_opts = {
     # 'progress_hooks': [my_hook],
 }
 
-url = 'https://www.youtube.com/watch?v=YsLJssA01b4'
+thumb_opts = {
+    'logger': MyLogger(),
+    'list_thumbnails': True,
+    'skip_download': True,
+    'outtmpl': 'video_dl/%(id)s-%(title)s.%(ext)s'
+}
 
-with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-    result = ydl.download([url])
-    # print(ydl)
+url = 'https://www.youtube.com/watch?v=D-F2vEAkdRA'
 
-with youtube_dl.YoutubeDL(sub_opts) as subdl:
-    subdl.download([url])
+# with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+#     result = ydl.download([url])
+#     # print(ydl)
+
+# with youtube_dl.YoutubeDL(sub_opts) as subdl:
+#     subdl.download([url])
+
+with youtube_dl.YoutubeDL(thumb_opts) as thumbdl:
+    result = thumbdl.download([url])
