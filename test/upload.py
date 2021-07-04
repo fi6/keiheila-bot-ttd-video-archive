@@ -1,8 +1,6 @@
 from __future__ import unicode_literals
 import youtube_dl
 
-" 'bestvideo[fps>50][vcodec^=avc1]+bestaudio' --merge-output-format mp4"
-
 
 class MyLogger(object):
     def debug(self, msg):
@@ -55,11 +53,11 @@ thumb_opts = {
     'outtmpl': 'video_dl/%(id)s-%(title)s.%(ext)s'
 }
 
-url = 'https://www.youtube.com/watch?v=lRK7E-oePPY'
+url = 'https://www.youtube.com/watch?v=ompdVTEuxz4'
 
 with youtube_dl.YoutubeDL(ydl_opts) as ydl:
     result = ydl.download([url])
-    # print(ydl)
+    print(result)
 
 with youtube_dl.YoutubeDL(sub_opts) as subdl:
     subdl.download([url])

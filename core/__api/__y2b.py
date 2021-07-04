@@ -15,7 +15,7 @@ class __Youtube():
     api = Api(api_key=auth.y2b_api_key)
 
     async def search_character(self, char: str):
-        pass
+        q= 'smash ultimate vs {} -amiibo -bgm -dojo -cpu'
 
     async def search_character_jp(self, char: str):
         q = '"ジョーカー"  スマブラ vs -bgm -amiibo'

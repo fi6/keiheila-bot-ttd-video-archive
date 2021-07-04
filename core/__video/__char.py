@@ -8,7 +8,7 @@ import json
 from bs4 import BeautifulSoup
 from fuzzywuzzy import fuzz
 
-with open('./utils/char_dict.json') as f:
+with open('./core/__video/char_all.json') as f:
     char_dict: Dict[str, List[str]] = json.load(f)
     logging.debug(
         'char_dict loaded with {rows} rows'.format(rows=len(char_dict.keys())))
@@ -41,13 +41,23 @@ def get_name_by_code(code: str) -> str | None:
         return char_dict[code][0]
 
 
+def get_name_by_codes(codes: List[str]) -> str:
+    """
+    throw error if key does not exist. should not happen!
+    """
+    result = []
+    for code in codes:
+        result.append(char_dict[code][0])
+    return ', '.join(result)
+
+
 def replace_name(match: Match):
     chars = match.group(1).split(',')
     result: List[str] = map(lambda x: parse_to_code(x), chars)
     return '({})'.format(', '.join(result))
 
 
-def parse_to_code(char: str):
+def parse_to_code(char: str) -> str:
     for key, items in char_dict.items():
         for name in items:
             if (char.lower() == name.lower()):
@@ -56,7 +66,12 @@ def parse_to_code(char: str):
             if score > 83:
                 # print(char, name)
                 return key
-    return char
+    # for key, items in char_dict.items():
+    #     for name in items:
+    #         score = fuzz.partial_token_sort_ratio(char.lower(), name.lower())
+    if re.search(r'(Pokémon|pokemon)', char, re.IGNORECASE):
+        return '33'
+    raise ValueError('code not found for char: ', char)
 
 
 def char_crawler(path: str):

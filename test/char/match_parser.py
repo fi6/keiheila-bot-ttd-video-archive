@@ -1,7 +1,10 @@
+import sys
+sys.path.append('.')
+
 import os
 import re
 from typing import Callable, List, Match
-os.path.join('.')
+
 import json
 from fuzzywuzzy import fuzz
 
@@ -42,6 +45,11 @@ def get_name(char: str):
             score = fuzz.token_sort_ratio(char.lower(), name.lower())
             if score > 83:
                 # print(char, name)
+                return char_dict[key][0]
+    for key, items in char_dict.items():
+        for name in items:
+            score = fuzz.partial_token_sort_ratio(char.lower(), name.lower())
+            if score > 83:
                 return char_dict[key][0]
     return char
 
@@ -97,6 +105,7 @@ def main():
     for row in matches.splitlines():
         chared = re.sub(r'(?:\(|\（)(.+?)(?:\)|\）)', replace_name, row)
         print(translate_group(chared))
+    # get_name()
 
 
 main()
