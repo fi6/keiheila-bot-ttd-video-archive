@@ -67,7 +67,8 @@ async def check_video(priority: int):
 
 def create_video_doc(vid_all,
                      tag_names,
-                     verified_up: VerifiedUp | None = None):
+                     verified_up: VerifiedUp | None = None,
+                     save=True):
     fields = VideoUpdate._fields.keys()
     vid_doc = VideoUpdate(**{k: v for k, v in vid_all.items() if k in fields})
     vid_doc._raw = vid_all
@@ -85,5 +86,6 @@ def create_video_doc(vid_all,
         vid_doc.source = source.group(0).strip() if source else ''
     if verified_up:
         vid_doc.up_ref = verified_up
-    vid_doc.save()
+    if save:
+        vid_doc.save()
     return vid_doc

@@ -24,7 +24,7 @@ def my_hook(d):
 
 
 ydl_opts = {
-    'format': 'bestvideo[fps>50][vcodec^=avc1]+bestaudio',
+    'format': 'bestvideo[fps>50][vcodec^=avc1]+bestaudio[acodec^=mp4a]',
     'merge_output_format': 'mp4',
     # 'listformats': True,
     'logger': MyLogger(),
@@ -55,14 +55,14 @@ thumb_opts = {
     'outtmpl': 'video_dl/%(id)s-%(title)s.%(ext)s'
 }
 
-url = 'https://www.youtube.com/watch?v=lRK7E-oePPY'
+url = 'https://www.youtube.com/watch?v=wbB5nlu9XZI'
 
 with youtube_dl.YoutubeDL(ydl_opts) as ydl:
     result = ydl.download([url])
     # print(ydl)
 
-with youtube_dl.YoutubeDL(sub_opts) as subdl:
-    subdl.download([url])
+# with youtube_dl.YoutubeDL(sub_opts) as subdl:
+#     subdl.download([url])
 
-with youtube_dl.YoutubeDL(thumb_opts) as thumbdl:
-    result = thumbdl.download([url])
+# with youtube_dl.YoutubeDL(thumb_opts) as thumbdl:
+#     result = thumbdl.download([url])

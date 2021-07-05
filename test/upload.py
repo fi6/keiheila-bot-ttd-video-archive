@@ -53,14 +53,19 @@ thumb_opts = {
     'outtmpl': 'video_dl/%(id)s-%(title)s.%(ext)s'
 }
 
-url = 'https://www.youtube.com/watch?v=ompdVTEuxz4'
+id = 'ompdVTEuxz4'
 
-with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-    result = ydl.download([url])
-    print(result)
+url = 'https://www.youtube.com/watch?v={}'.format(id)
 
-with youtube_dl.YoutubeDL(sub_opts) as subdl:
-    subdl.download([url])
 
-with youtube_dl.YoutubeDL(thumb_opts) as thumbdl:
-    result = thumbdl.download([url])
+def download():
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        result = ydl.download([url])
+
+    with youtube_dl.YoutubeDL(sub_opts) as subdl:
+        subdl.download([url])
+
+    with youtube_dl.YoutubeDL(thumb_opts) as thumbdl:
+        result = thumbdl.download([url])
+
+def test()
