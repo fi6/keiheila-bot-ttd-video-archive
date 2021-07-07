@@ -1,6 +1,8 @@
 from __future__ import annotations
 import asyncio
 from typing import List
+
+from bilibili_api import live
 import core
 import logging
 
@@ -25,13 +27,16 @@ async def check() -> LiveInfo | None:
             living_cache.set(up.roomid, info)
             continue
         elif last_info.live_status != 1:
-            info = LiveInfo(await core.api.bilibili.get_live_info(up.roomid))
-            living_cache.set(up.roomid, info)
             logging.info('checking live info for {}'.format(
                 (up.nickname, up.roomid)))
+            info = LiveInfo(await core.api.bilibili.get_live_info(up.roomid))
+            living_cache.set(up.roomid, info)
             # logging.debug(living_cache.expire_times())
             if info.live_status == 1:
                 # just start living
+                logging.info(
+                    'found live start for {}, adding user info'.format(
+                        up.nickname))
                 return await core.api.bilibili.add_user_info(info)
         elif last_info.live_status == 1:
             pass

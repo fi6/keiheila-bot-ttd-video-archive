@@ -1,16 +1,28 @@
+import asyncio
+import json
 import sys
 sys.path.append('.')
 import re
 from typing import List
 from urllib.parse import parse_qs, urlparse
-
+from core.types import LiveInfo
+import core
 from models import VerifiedUp, _Video
 
-ups: List[VerifiedUp] = VerifiedUp.objects()
-for up in ups:
-    if 'live' in up.tag:
-        print(up.nickname, up.tag)
 
+async def main():
+    ups: List[VerifiedUp] = VerifiedUp.objects(tag='live')
+    roomlist = list(filter(lambda x: x.roomid, ups))
+    up = roomlist[0]
+    i = await core.api.bilibili.get_live_info(up.roomid)
+    info = LiveInfo(i)
+
+    info_full = await core.api.bilibili.add_user_info(info)
+    print(json.dumps(info_full.to_card()))
+
+
+asyncio.get_event_loop().run_until_complete(main())
+exit()
 for video in _Video.objects():
     if not video.original:
         result = urlparse(video.source)

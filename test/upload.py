@@ -68,4 +68,5 @@ def download():
     with youtube_dl.YoutubeDL(thumb_opts) as thumbdl:
         result = thumbdl.download([url])
 
-def test()
+def test():
+    

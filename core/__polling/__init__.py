@@ -76,6 +76,8 @@ class __Polling(AsyncIOEventEmitter):
             logging.info('check live task start')
             live_info = await _check_live.check()
             if live_info:
+                logging.info(
+                    'sending live start info for {}'.format(live_info))
                 self.emit('live_start', live_info)
             # schedule job for next time
             scheduler.add_job(self._check_live_task,
