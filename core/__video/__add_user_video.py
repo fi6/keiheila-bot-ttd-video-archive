@@ -1,3 +1,4 @@
+from datetime import datetime
 import logging
 import re
 from mongoengine.errors import DoesNotExist
@@ -13,7 +14,8 @@ def add_user_video(data: dict, smash_only=True):
         video.bvid = data['bvid']
         video.uid = data['mid']
         video.up_ref = VerifiedUp.objects.get(uid=video.uid)
-
+    if isinstance(video, VideoRecord):
+        video.publish = datetime.fromtimestamp(data['created'])
     video.title = data['title']
     video.pic = data['pic']
     video.desc = data['description']

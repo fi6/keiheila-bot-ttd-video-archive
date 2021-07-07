@@ -17,8 +17,8 @@ logging.basicConfig(
 )
 
 ups = list(VerifiedUp.objects(tag='porter'))
-
-for up in ups[13:]:
+print([up.nickname for up in ups])
+for up in ups:
     print(up.nickname, up.uid)
 
     videos = asyncio.get_event_loop().run_until_complete(

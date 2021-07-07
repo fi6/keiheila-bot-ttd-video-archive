@@ -11,14 +11,8 @@ from models import VerifiedUp, _Video
 
 
 async def main():
-    ups: List[VerifiedUp] = VerifiedUp.objects(tag='live')
-    roomlist = list(filter(lambda x: x.roomid, ups))
-    up = roomlist[0]
-    i = await core.api.bilibili.get_live_info(up.roomid)
-    info = LiveInfo(i)
-
-    info_full = await core.api.bilibili.add_user_info(info)
-    print(json.dumps(info_full.to_card()))
+    vid = (await core.api.bilibili.get_video_info('BV1mt41167EA'))
+    print(vid)
 
 
 asyncio.get_event_loop().run_until_complete(main())
